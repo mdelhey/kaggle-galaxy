@@ -1,3 +1,7 @@
+# kaggle-galaxy data
+Data/
+Submissions/
+
 *.py[cod]
 
 # C extensions
