@@ -5,12 +5,12 @@ import sklearn as sk
 from sklearn import linear_model
 from sklearn import svm
 from sklearn import neighbors
-#from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import RandomForestRegressor
 from read import *
 
 ###### Parameters
-f_in_trn = 'Data/train_1.csv'
-f_in_tst = 'Data/test_1.csv'
+f_in_trn = 'Data/train_28.csv'
+f_in_tst = 'Data/test_28.csv'
 sol_dir = 'Data/train_solutions.csv'
 my_lam = 5
 ###### 
@@ -19,7 +19,7 @@ my_lam = 5
 my_file = re.search(r'train_[0-9]+', f_in_trn).group()
 my_dim = re.search(r'[0-9]+', my_file).group()
 file_name = inspect.getfile(inspect.currentframe())
-f_out = 'Submissions/knn_w_' + str(my_dim) + '.csv'
+f_out = 'Submissions/rf_' + str(my_dim) + '.csv'
 
 def read_X_Y():
     """
@@ -112,15 +112,16 @@ def ridge(Xtrn, Xtst, Ytrn):
     model = sk.linear_model.Lasso(alpha = my_alpha)
     model.fit(Xtrn, Ytrn[::, 1:])
     print(model.coef_[1])
+    '''
 
-    #model = RandomForestRegressor()
-    #model.fit(Xtrn, Ytrn[::, 1:])
+    model = RandomForestRegressor()
+    model.fit(Xtrn, Ytrn[::, 1:])
     
     # Predict on text matrix
     print(file_name + ': Predicting on test matrix')
     Ytst = model.predict(Xtst)
     return Ytst
-    '''
+    
     
 
 def output_Ytst(Ytst):
@@ -141,7 +142,8 @@ def main():
     (Xtrn, Xtst, Ytrn, f_out) = read_X_Y()
     #Ytst = least_squares(Xtrn, Xtst, Ytrn)
     #Ytst = knn(Xtrn, Xtst, Ytrn)
-    Ytst = kernel_ridge(Xtrn, Xtst, Ytrn)
+    Ytst = ridge(Xtrn, Xtst, Ytrn)
+    #Ytst = kernel_ridge(Xtrn, Xtst, Ytrn)
     output_Ytst(Ytst)
 
 if __name__ == "__main__":

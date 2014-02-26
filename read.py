@@ -8,7 +8,7 @@ from sklearn import linear_model
 
 ###### Parameters
 ## Set dimention of image matrix (my_dim x my_dim)
-my_dim = 24
+my_dim = 424
 f_out_trn = 'Data/train'
 f_out_tst = 'Data/test'
 trn_dir = 'Data/images_train'
@@ -95,13 +95,10 @@ def ensure_dim(a):
 
 def run_grey():
     print(file_name + ': using dim = ' + str(my_dim))
-    
     print(file_name + ': Reading training images') 
     Xtrn = read_images_grey(trn_dir, dim = my_dim)
-
     print(file_name + ': Reading test images')
     Xtst = read_images_grey(tst_dir, dim = my_dim)
-
     print(file_name + ': Saving .csv files')
     f_trn = f_out_trn + '_' + str(my_dim) + '.csv'
     f_tst = f_out_tst + '_' + str(my_dim) + '.csv'
@@ -110,13 +107,10 @@ def run_grey():
     
 def run_vec():
     print(file_name + ': Converting images into p = 783 vector')
-
     print(file_name + ': Training data...')
     Xtrn = read_images_vector(trn_dir, crop = 140, pixel_size = 5)
-
     print(file_name + ': Test data...')
     Xtst = read_images_vector(tst_dir, crop = 140, pixel_size = 5)
-
     print(file_name + ': Saving .csv files')
     f_trn = f_out_trn + '_vec.csv'
     f_tst = f_out_tst + '_vec.csv'
