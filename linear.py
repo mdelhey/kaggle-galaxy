@@ -9,31 +9,33 @@ from sklearn import neighbors
 from read import *
 
 ###### Parameters
-f_in_trn = 'Data/train_24.csv'
-f_in_tst = 'Data/test_24.csv'
+f_in_trn = 'Data/train_1.csv'
+f_in_tst = 'Data/test_1.csv'
 sol_dir = 'Data/train_solutions.csv'
-#my_alphas = [0.1, 0.5, 1, 10, 20, 30, 40, 50, 100, 150, 200, 300]
-#my_alpha = 1
+my_lam = 5
 ###### 
 
 # Take care of some file i/o
 my_file = re.search(r'train_[0-9]+', f_in_trn).group()
 my_dim = re.search(r'[0-9]+', my_file).group()
 file_name = inspect.getfile(inspect.currentframe())
-f_out = 'Submissions/knn_' + str(my_dim) + '.csv'
+f_out = 'Submissions/knn_w_' + str(my_dim) + '.csv'
 
 def read_X_Y():
-    # Read in pre-processed matricies & train solutions
+    """
+    Read in pre-processed matricies & train solutions
+    """
     print(file_name + ': Reading train/test matrix w/ dim = ' + my_dim)
     Xtrn = ensure_dim(np.loadtxt(open(f_in_trn, 'rb'), delimiter = ',', skiprows = 0))
     Xtst = ensure_dim(np.loadtxt(open(f_in_tst, 'rb'), delimiter = ',', skiprows = 0))
     print(file_name + ': Reading training solutions')
     Ytrn = np.loadtxt(open(sol_dir, 'rb'), delimiter = ',', skiprows = 1)
-
     return (Xtrn, Xtst, Ytrn, my_dim)
 
 def least_squares(Xtrn, Xtst, Ytrn):
-    # Train linear regression
+    """
+    Train/predict via scikit-learn for linear regression
+    """
     print(file_name + ': Training [least squares] regression')
     model = sk.linear_model.LinearRegression()
     model.fit(Xtrn, Ytrn[::, 1:])
@@ -43,10 +45,40 @@ def least_squares(Xtrn, Xtst, Ytrn):
     Ytst = model.predict(Xtst)
     return Ytst
 
+def kernel_ridge(Xtrn, Xtst, Ytrn):
+    """
+    Manual implimentation of kernel ridge regression.
+    """
+    def linear_kernel(Xtrn, Xtst, c = 0):
+        print(file_name + ': \t Using linear kernel')
+        #Ktrn = np.dot(Xtrn.T, Xtrn) + c
+        Ktrn = np.dot(Xtrn, Xtrn.T) + c
+        #Ktst = np.dot(Xtst.T, Xtst) + c
+        Ktst = np.dot(Xtst, Xtst.T)
+        return (Ktrn, Ktst)
+    def rbf_kernel(Xtrn, Xtst, sigma = 1):
+        print(file_name + ': \t Using radial basis kernel')
+        return (Ktrn, Ktst)
+            
+    # Train kernel ridge regression
+    print(file_name + ': Training [kernel ridge] regression')
+    (Ktrn, Ktst) = linear_kernel(Xtrn, Xtst)
+    print('Ktrn shape: '+ str(Ktrn.shape))
+    # a = (K+LI)^-1*Y 
+    #a = np.dot(np.linalg.inv(Ktrn + my_lam * np.identity(Ktrn.shape[1])), Ytrn)
+    a = dot(np.linalg.inv(Ktrn + my_lam * np.identity(Ktrn.shape[1])), Ytrn[::,0])
+
+    # Predict on test matrix
+    print(file_name + ': Predicting on test matrix')
+    print('a shape:' + str(a.shape) + ' Ktst shape:' + str(Ktst.shape))
+    #Ytst = np.dot(a.T, Ktst)
+    Ytst = a.T * Ktst
+    return Ytst
+
 def knn(Xtrn, Xtst, Ytrn):
-    # Train linear regression
+    # Train knn regression
     print(file_name + ': Training [knn] regression')
-    model = sk.neighbors.KNeighborsRegressor()
+    model = sk.neighbors.KNeighborsRegressor(n_neighbors = 5, weights = 'distance')
     model.fit(Xtrn, Ytrn[::, 1:])
     
     # Predict on test matrix
@@ -108,7 +140,8 @@ def output_Ytst(Ytst):
 def main():
     (Xtrn, Xtst, Ytrn, f_out) = read_X_Y()
     #Ytst = least_squares(Xtrn, Xtst, Ytrn)
-    Ytst = knn(Xtrn, Xtst, Ytrn)
+    #Ytst = knn(Xtrn, Xtst, Ytrn)
+    Ytst = kernel_ridge(Xtrn, Xtst, Ytrn)
     output_Ytst(Ytst)
 
 if __name__ == "__main__":
