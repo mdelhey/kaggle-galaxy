@@ -9,24 +9,18 @@ from read import *
 
 ###### Parameters
 #f_in_trn = 'Data/train_1.csv'
-f_in_trn = 'Data/nmf_train_4.csv'
+#f_in_trn = 'Data/nmf_train_4.csv'
 #f_in_tst = 'Data/test_1.csv'
-f_in_tst = 'Data/nmf_test_4.csv'
+#f_in_tst = 'Data/nmf_test_4.csv'
 sol_dir = 'Data/train_solutions.csv'
 my_lam = 5
 ###### 
 
-# Take care of some file i/o
-my_file = re.search(r'train_[0-9]+', f_in_trn).group()
-my_dim = re.search(r'[0-9]+', my_file).group()
-file_name = inspect.getfile(inspect.currentframe())
-f_out = 'Submissions/ls_nmf_' + str(my_dim) + '.csv'
-
-def read_X_Y():
+def read_X_Y(f_in_trn, f_in_tst):
     """
     Read in pre-processed matricies & train solutions
     """
-    print(file_name + ': Reading train/test matrix w/ dim = ' + my_dim)
+    print(file_name + ': Reading train/test matrix w/ dim = ' + str(my_dim))
     Xtrn = ensure_dim(np.loadtxt(open(f_in_trn, 'rb'), delimiter = ',', skiprows = 0))
     Xtst = ensure_dim(np.loadtxt(open(f_in_tst, 'rb'), delimiter = ',', skiprows = 0))
     print(file_name + ': Reading training solutions')
@@ -110,6 +104,12 @@ def output_Ytst(Ytst):
 
 
 def main():
+    # Take care of some file i/o
+    my_file = re.search(r'train_[0-9]+', f_in_trn).group()
+    my_dim = re.search(r'[0-9]+', my_file).group()
+    file_name = inspect.getfile(inspect.currentframe())
+    f_out = 'Submissions/ls_nmf_' + str(my_dim) + '.csv'
+
     (Xtrn, Xtst, Ytrn, f_out) = read_X_Y()
     Ytst = least_squares(Xtrn, Xtst, Ytrn)
     #Ytst = knn(Xtrn, Xtst, Ytrn)

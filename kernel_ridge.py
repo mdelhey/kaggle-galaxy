@@ -1,6 +1,20 @@
+import os, inspect, re
 import numpy as np
-from linear import read_X_Y, output_Ytst
 from read import ensure_dim, force_bounds, get_image_names
+from linear import read_X_Y, output_Ytst
+
+###### Parameters
+f_in_trn = 'Data/train_1.csv'
+f_in_tst = 'Data/test_1.csv'
+sol_dir = 'Data/train_solutions.csv'
+my_lam = 5
+######
+
+# Take care of some file i/o
+my_file = re.search(r'train_[0-9]+', f_in_trn).group()
+my_dim = re.search(r'[0-9]+', my_file).group()
+file_name = inspect.getfile(inspect.currentframe())
+f_out = 'Submissions/ls_nmf_' + str(my_dim) + '.csv'
 
 def linear_kernel(Xtrn, Xtst, c = 0):
     print(file_name + ': \t Using linear kernel')
@@ -33,9 +47,8 @@ def kernel_ridge(Xtrn, Xtst, Ytrn):
     Ytst = a.T * Ktst
     return Ytst
 
-
 def main():
-    (Xtrn, Xtst, Ytrn, f_out) = read_X_Y()
+    (Xtrn, Xtst, Ytrn, f_out) = read_X_Y(f_in_trn, f_in_tst)
     Ytst = kernel_ridge(Xtrn, Xtst, Ytrn)
     output_Ytst(Ytst)
     return 
