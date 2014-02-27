@@ -8,15 +8,21 @@ from sklearn.ensemble import RandomForestRegressor
 from read import *
 
 ###### Parameters
-#f_in_trn = 'Data/train_1.csv'
+f_in_trn = 'Data/train_24.csv'
 #f_in_trn = 'Data/nmf_train_4.csv'
-#f_in_tst = 'Data/test_1.csv'
+f_in_tst = 'Data/test_24.csv'
 #f_in_tst = 'Data/nmf_test_4.csv'
 sol_dir = 'Data/train_solutions.csv'
 my_lam = 5
 ###### 
 
-def read_X_Y(f_in_trn, f_in_tst):
+# Take care of some file i/o
+my_file = re.search(r'train_[0-9]+', f_in_trn).group()
+my_dim = re.search(r'[0-9]+', my_file).group()
+file_name = inspect.getfile(inspect.currentframe())
+f_out = 'Submissions/ls_nmf_' + str(my_dim) + '.csv'
+
+def read_X_Y():
     """
     Read in pre-processed matricies & train solutions
     """
@@ -104,12 +110,6 @@ def output_Ytst(Ytst):
 
 
 def main():
-    # Take care of some file i/o
-    my_file = re.search(r'train_[0-9]+', f_in_trn).group()
-    my_dim = re.search(r'[0-9]+', my_file).group()
-    file_name = inspect.getfile(inspect.currentframe())
-    f_out = 'Submissions/ls_nmf_' + str(my_dim) + '.csv'
-
     (Xtrn, Xtst, Ytrn, f_out) = read_X_Y()
     Ytst = least_squares(Xtrn, Xtst, Ytrn)
     #Ytst = knn(Xtrn, Xtst, Ytrn)

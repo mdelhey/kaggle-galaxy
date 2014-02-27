@@ -1,14 +1,7 @@
 import os, inspect, re
 import numpy as np
-from read import ensure_dim, force_bounds, get_image_names
-from linear import read_X_Y, output_Ytst
-
-###### Parameters
-f_in_trn = 'Data/train_1.csv'
-f_in_tst = 'Data/test_1.csv'
-sol_dir = 'Data/train_solutions.csv'
-my_lam = 5
-######
+from read import *
+from linear import *
 
 # Take care of some file i/o
 my_file = re.search(r'train_[0-9]+', f_in_trn).group()
