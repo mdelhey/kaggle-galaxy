@@ -1,5 +1,4 @@
 import numpy as np
-import pandas as pd
 import cv2, os, inspect, re
 import sklearn as sk
 from sklearn import linear_model
@@ -9,8 +8,10 @@ from sklearn.ensemble import RandomForestRegressor
 from read import *
 
 ###### Parameters
-f_in_trn = 'Data/train_28.csv'
-f_in_tst = 'Data/test_28.csv'
+#f_in_trn = 'Data/train_1.csv'
+f_in_trn = 'Data/nmf_train_4.csv'
+#f_in_tst = 'Data/test_1.csv'
+f_in_tst = 'Data/nmf_test_4.csv'
 sol_dir = 'Data/train_solutions.csv'
 my_lam = 5
 ###### 
@@ -19,7 +20,7 @@ my_lam = 5
 my_file = re.search(r'train_[0-9]+', f_in_trn).group()
 my_dim = re.search(r'[0-9]+', my_file).group()
 file_name = inspect.getfile(inspect.currentframe())
-f_out = 'Submissions/rf_' + str(my_dim) + '.csv'
+f_out = 'Submissions/ls_nmf_' + str(my_dim) + '.csv'
 
 def read_X_Y():
     """
@@ -43,36 +44,6 @@ def least_squares(Xtrn, Xtst, Ytrn):
     # Predict on test matrix
     print(file_name + ': Predicting on test matrix')
     Ytst = model.predict(Xtst)
-    return Ytst
-
-def kernel_ridge(Xtrn, Xtst, Ytrn):
-    """
-    Manual implimentation of kernel ridge regression.
-    """
-    def linear_kernel(Xtrn, Xtst, c = 0):
-        print(file_name + ': \t Using linear kernel')
-        #Ktrn = np.dot(Xtrn.T, Xtrn) + c
-        Ktrn = np.dot(Xtrn, Xtrn.T) + c
-        #Ktst = np.dot(Xtst.T, Xtst) + c
-        Ktst = np.dot(Xtst, Xtst.T)
-        return (Ktrn, Ktst)
-    def rbf_kernel(Xtrn, Xtst, sigma = 1):
-        print(file_name + ': \t Using radial basis kernel')
-        return (Ktrn, Ktst)
-            
-    # Train kernel ridge regression
-    print(file_name + ': Training [kernel ridge] regression')
-    (Ktrn, Ktst) = linear_kernel(Xtrn, Xtst)
-    print('Ktrn shape: '+ str(Ktrn.shape))
-    # a = (K+LI)^-1*Y 
-    #a = np.dot(np.linalg.inv(Ktrn + my_lam * np.identity(Ktrn.shape[1])), Ytrn)
-    a = dot(np.linalg.inv(Ktrn + my_lam * np.identity(Ktrn.shape[1])), Ytrn[::,0])
-
-    # Predict on test matrix
-    print(file_name + ': Predicting on test matrix')
-    print('a shape:' + str(a.shape) + ' Ktst shape:' + str(Ktst.shape))
-    #Ytst = np.dot(a.T, Ktst)
-    Ytst = a.T * Ktst
     return Ytst
 
 def knn(Xtrn, Xtst, Ytrn):
@@ -121,8 +92,7 @@ def ridge(Xtrn, Xtst, Ytrn):
     print(file_name + ': Predicting on test matrix')
     Ytst = model.predict(Xtst)
     return Ytst
-    
-    
+
 
 def output_Ytst(Ytst):
     # Fix up test response 
@@ -136,15 +106,17 @@ def output_Ytst(Ytst):
     print(file_name + ': Saving csv to ' + f_out)
     colfmt = ['%i'] + ['%f'] * (Ytst.shape[1] - 1)
     np.savetxt(f_out, Ytst, delimiter = ',', fmt = colfmt)
+    return 
 
 
 def main():
     (Xtrn, Xtst, Ytrn, f_out) = read_X_Y()
-    #Ytst = least_squares(Xtrn, Xtst, Ytrn)
+    Ytst = least_squares(Xtrn, Xtst, Ytrn)
     #Ytst = knn(Xtrn, Xtst, Ytrn)
-    Ytst = ridge(Xtrn, Xtst, Ytrn)
+    #Ytst = ridge(Xtrn, Xtst, Ytrn)
     #Ytst = kernel_ridge(Xtrn, Xtst, Ytrn)
     output_Ytst(Ytst)
+    return 
 
 if __name__ == "__main__":
     main()

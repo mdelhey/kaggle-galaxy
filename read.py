@@ -1,7 +1,5 @@
 import numpy as np
 import cv2, os, inspect
-import sklearn as sk
-from sklearn import linear_model
 
 # X = individual images, n = 61,578, p = my_dim x my_dim
 # Y = response for each, length(y) = 37
