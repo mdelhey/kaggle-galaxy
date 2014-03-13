@@ -6,9 +6,9 @@ import cv2, os, inspect
 
 ###### Parameters
 ## Set dimention of image matrix (my_dim x my_dim)
-my_dim = 424
-f_out_trn = 'Data/train'
-f_out_tst = 'Data/test'
+my_dim = 28
+f_out_trn = 'Data/train_nmf'
+f_out_tst = 'Data/test_nmf'
 trn_dir = 'Data/images_train'
 tst_dir = 'Data/images_test'
 sol_dir = 'Data/train_solutions.csv'
@@ -27,6 +27,47 @@ def read_images_grey(dir, dim = 128, n = 0):
     for imgf in image_files:
         img = cv2.imread(imgf, 0)
         img = cv2.resize(img, (dim, dim), interpolation=cv2.INTER_CUBIC)
+        length = np.prod(img.shape)
+        img = np.reshape(img, length)
+        images.append(img)
+    images = np.vstack(images) # Save images as matrix
+    return images
+
+def read_images_grey_nmf(dir, dim = 28, iters = 30, my_rank = 8):
+    """
+    Read in images as matrix while performing NMF for dim reduction
+    """
+    print(file_name + ': NMF with rank %i' % my_rank)
+    import nimfa
+    # Bergin reading in images
+    images = []
+    image_files = sorted(os.listdir(dir))
+    image_files = [dir + '/' + f for f in image_files]
+    for imgf in image_files:
+        img = cv2.imread(imgf, 0)
+        img = cv2.resize(img, (dim, dim), interpolation=cv2.INTER_CUBIC)
+        # Perform pca to for dim reduction
+        fctr = nimfa.mf(img, method = 'nmf', max_iter = iters, rank = my_rank)
+        fctr_res = nimfa.mf_run(fctr)
+        img = fctr_res.basis()
+        length = np.prod(img.shape)
+        img = np.reshape(img, length)
+        images.append(img)
+    images = np.vstack(images) # Save images as matrix
+    return images
+
+def read_images_grey_pca(dir, n = 8):
+    print(file_name + ': PCA with %i components' % n)
+    from sklearn.decomposition import KernelPCA
+    model = KernelPCA(n_components=n)
+    # Read in images as matrix
+    # Perform pca to for dim reduction
+    images = []
+    image_files = sorted(os.listdir(dir))
+    image_files = [dir + '/' + f for f in image_files]
+    for imgf in image_files:
+        img = cv2.imread(imgf, 0)
+        img = model.fit_transform(img)
         length = np.prod(img.shape)
         img = np.reshape(img, length)
         images.append(img)
@@ -91,33 +132,21 @@ def ensure_dim(a):
         a = np.reshape(a, (len(a), 1))
     return a
 
-def run_grey():
+def main():
     print(file_name + ': using dim = ' + str(my_dim))
-    print(file_name + ': Reading training images') 
-    Xtrn = read_images_grey(trn_dir, dim = my_dim)
-    print(file_name + ': Reading test images')
-    Xtst = read_images_grey(tst_dir, dim = my_dim)
+    #Xtrn = read_images_vector(trn_dir, crop = 140, pixel_size = 5)
+    #Xtst = read_images_vector(tst_dir, crop = 140, pixel_size = 5)
+    print(file_name + ': Training data...')
+    #Xtrn = read_images_grey(trn_dir, dim = my_dim)
+    Xtrn = read_images_grey_nmf(trn_dir)
+    print(file_name + ': Test data...')
+    #Xtst = read_images_grey(tst_dir, dim = my_dim)
+    Xtst = read_images_grey_nmf(tst_dir)
     print(file_name + ': Saving .csv files')
     f_trn = f_out_trn + '_' + str(my_dim) + '.csv'
     f_tst = f_out_tst + '_' + str(my_dim) + '.csv'
     np.savetxt(f_trn, Xtrn, delimiter = ',', fmt = '%i')
     np.savetxt(f_tst, Xtst, delimiter = ',', fmt = '%i')
-    
-def run_vec():
-    print(file_name + ': Converting images into p = 783 vector')
-    print(file_name + ': Training data...')
-    Xtrn = read_images_vector(trn_dir, crop = 140, pixel_size = 5)
-    print(file_name + ': Test data...')
-    Xtst = read_images_vector(tst_dir, crop = 140, pixel_size = 5)
-    print(file_name + ': Saving .csv files')
-    f_trn = f_out_trn + '_vec.csv'
-    f_tst = f_out_tst + '_vec.csv'
-    np.savetxt(f_trn, Xtrn, delimiter = ',', fmt = '%i')
-    np.savetxt(f_tst, Xtst, delimiter = ',', fmt = '%i')
-
-def main():
-    run_grey()
-    #run_vec()
     
 if __name__ == "__main__":
     main()
