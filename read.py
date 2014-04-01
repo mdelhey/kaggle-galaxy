@@ -6,15 +6,14 @@ import cv2, os, inspect
 
 ###### Parameters
 ## Set dimention of image matrix (my_dim x my_dim)
-my_dim = 28
-f_out_trn = 'Data/train_nmf'
-f_out_tst = 'Data/test_nmf'
+my_dim = 8
+f_out_trn = 'Data/train_clr'
+f_out_tst = 'Data/test_clr'
 trn_dir = 'Data/images_train'
 tst_dir = 'Data/images_test'
 sol_dir = 'Data/train_solutions.csv'
 ######
 file_name = inspect.getfile(inspect.currentframe())
-
 
 def read_images_grey(dir, dim = 128, n = 0):
     # Read in images as matrix
@@ -32,6 +31,26 @@ def read_images_grey(dir, dim = 128, n = 0):
         images.append(img)
     images = np.vstack(images) # Save images as matrix
     return images
+
+def read_images_color(my_dir, dim = 8, n = 0):
+    # Read in images as color matrix
+    # Shrink 424x424 --> 3x(dim x dim)
+    images = []
+    image_files = sorted(os.listdir(my_dir))
+    image_files = [my_dir + '/' + f for f in image_files]
+    for imgf in image_files:
+        # Read images as cv2 obj
+        img = cv2.imread(imgf, 3)
+        # Resize to 3x(8x8)
+        img = cv2.resize(img, (dim, dim), interpolation=cv2.INTER_CUBIC)
+        # Flatten to 192
+        img_len = np.prod(img.shape)
+        img = np.reshape(img, img_len)
+        images.append(img)
+    # Save images as matrix
+    images = np.vstack(images) 
+    return images
+
 
 def read_images_grey_nmf(dir, dim = 28, iters = 30, my_rank = 8):
     """
@@ -117,6 +136,7 @@ def get_image_names(dir, n = 0):
     return np.asarray(inames)
 
 def force_bounds(a):
+    # Ensure bounds [0,1]
     for x in np.nditer(a, op_flags = ['readwrite']):
         if x[...] > 1:
             x[...] = 1
@@ -125,6 +145,7 @@ def force_bounds(a):
     return a
 
 def ensure_dim(a):
+    # Needed for other functions
     try:
         x = a.shape[1]
     except IndexError:
@@ -134,17 +155,17 @@ def ensure_dim(a):
 
 def main():
     print(file_name + ': using dim = ' + str(my_dim))
-    #Xtrn = read_images_vector(trn_dir, crop = 140, pixel_size = 5)
-    #Xtst = read_images_vector(tst_dir, crop = 140, pixel_size = 5)
     print(file_name + ': Training data...')
-    #Xtrn = read_images_grey(trn_dir, dim = my_dim)
-    Xtrn = read_images_grey_nmf(trn_dir)
+    # Read training images as array
+    Xtrn = read_images_color(trn_dir, dim = my_dim)
     print(file_name + ': Test data...')
-    #Xtst = read_images_grey(tst_dir, dim = my_dim)
-    Xtst = read_images_grey_nmf(tst_dir)
+    # Read test images as array
+    Xtst = read_images_color(tst_dir, dim = my_dim)
     print(file_name + ': Saving .csv files')
+    # Append "_dim.csv" to files so we know
     f_trn = f_out_trn + '_' + str(my_dim) + '.csv'
     f_tst = f_out_tst + '_' + str(my_dim) + '.csv'
+    # Actually save
     np.savetxt(f_trn, Xtrn, delimiter = ',', fmt = '%i')
     np.savetxt(f_tst, Xtst, delimiter = ',', fmt = '%i')
     
