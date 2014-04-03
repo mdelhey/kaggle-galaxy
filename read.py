@@ -6,7 +6,7 @@ import cv2, os, inspect
 
 ###### Parameters
 ## Set dimention of image matrix (my_dim x my_dim)
-my_dim = 8
+my_dim = 32
 f_out_trn = 'Data/train_clr'
 f_out_tst = 'Data/test_clr'
 trn_dir = 'Data/images_train'

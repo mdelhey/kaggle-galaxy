@@ -16,10 +16,10 @@ from sklearn import preprocessing
 from read import *
 
 ###### Parameters
-f_in_trn = 'Data/train_clr_8.csv'
-f_in_tst = 'Data/test_clr_8.csv'
+f_in_trn = 'Data/train_28.csv'
+f_in_tst = 'Data/test_28.csv'
 sol_dir = 'Data/train_solutions.csv'
-my_lam = 5
+my_lam = 10
 ###### 
 
 # Take care of some file i/o
@@ -202,12 +202,19 @@ def output_Ytst(Ytst, tst_dir, f_out, save_csv=True, return_Y=False):
         return Ytst
     return 
 
-    
+
+def svm_regression(Xtrn, Xtst, Ytrn, lam):
+    from sklearn.svm import SVR
+    model = SVR(kernel = 'linear', C=1/lam)
+    model.fit(Xtrn, Ytrn[::, 1:])
+    Ytst = model.predict(Xtst)
+    return Ytst
+
 def main():
     """
     Run experiment
     """
-    (Xtrn, Xtst, Ytrn, f_out) = read_X_Y()
+    (Xtrn, Xtst, Ytrn, f_out) = read_X_Y(f_in_trn, f_in_tst, sol_dir, my_dim)
      
     #lam_range = np.arange(0, 105, 5)
     #lam_range = np.array([1,100,500,1000, 5000, 10000, 100000, 1000000])
@@ -218,12 +225,14 @@ def main():
     #clf.fit(Xtrn, Ytrn[::, 1:])
 
     # Plot learning curve and bias/var tradeoff 
-    learning_curve(Xtrn, Ytrn, method='linear')
+    #learning_curve(Xtrn, Ytrn, method='linear')
 
     #model = ridge_train(Xtrn, Ytrn, 10)
     #Ytst = ridge_pred(model, Xtst)
-    model = ls_train(Xtrn, Ytrn)
-    Ytst = ls_pred(model, Xtst)
+    #model = ls_train(Xtrn, Ytrn)
+    #Ytst = ls_pred(model, Xtst)
+
+    Ytst = svm_regression(Xtrn, Xtst, Ytrn, 10)
     output_Ytst(Ytst)
     return 
 
