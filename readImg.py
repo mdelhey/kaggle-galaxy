@@ -21,8 +21,11 @@ def readImg(imgf, dim=24):
     # Downsample images to 64x64 (dim x dim)
     img = cv2.resize(img, (dim, dim), interpolation=cv2.INTER_CUBIC)
 
-    ### Data augmentation!
-
+    ### Data augmentation
+    # Define transformation matrix (2 x 3)
+    M = [1 1; 2 2; 3 3]
+    cv2.wrapAffine(img, M)
+    
     # Flatten data [each col represents the r/g/b color]
     #img = np.reshape(img, (dim*dim,3))
     img = np.reshape(img, (dim*dim))

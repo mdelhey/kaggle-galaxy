@@ -31,6 +31,6 @@ def readData(f_in_trn, f_in_tst, f_in_sol):
     Xtst = np.vstack(tst_images)
     
     # Read train solutions
-    Ytrn = np.loadtxt(open(f_in_sol, 'rb'), delimiter = ',', skiprows = 1)
+    Ytrn = np.loadtxt(open(f_in_sol, 'rb'), delimiter=',', skiprows=1, usecols=(range(1,39))
 
     return (Xtrn, Ytrn, Xtst)

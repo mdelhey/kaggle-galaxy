@@ -195,7 +195,7 @@ def output_Ytst(Ytst, tst_dir, f_out, save_csv=True, return_Y=False):
     # Output submission [if desired]
     if (save_csv):
         print(file_name + ': Saving csv to ' + f_out)
-        colfmt = ['%i'] + ['%f'] * (Ytst.shape[1] - 1)
+         colfmt = ['%i'] + ['%f'] * (Ytst.shape[1] - 1)
         np.savetxt(f_out, Ytst, delimiter = ',', fmt = colfmt)
     # Return Ytst matrix [if desired]
     if (return_Y):
