@@ -1,4 +1,4 @@
-def readData(f_in_trn, f_in_tst, f_in_sol):
+def readData(f_in_trn, f_in_tst, f_in_sol, augmenting=False):
     '''
     This function reads in data as numpy matricies.
     ---
@@ -21,7 +21,7 @@ def readData(f_in_trn, f_in_tst, f_in_sol):
     # Map images --> vectors; keep track of progress
     for idx, imgf in enumerate(trn_img_list):
         if (idx % 5000) == 0: print 'on train img: %i' % idx
-        trn_images.append(readImg(imgf))
+        trn_images.append(readImg(imgf, augment=augmenting))
     for idx, imgf in enumerate(tst_img_list):
         if (idx % 5000) == 0: print 'on test img: %i' % idx
         tst_images.append(readImg(imgf, augment=False))
