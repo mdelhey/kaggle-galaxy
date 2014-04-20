@@ -24,13 +24,13 @@ def readData(f_in_trn, f_in_tst, f_in_sol):
         trn_images.append(readImg(imgf))
     for idx, imgf in enumerate(tst_img_list):
         if (idx % 5000) == 0: print 'on test img: %i' % idx
-        tst_images.append(readImg(imgf))
+        tst_images.append(readImg(imgf, augment=False))
 
     # Save images as matrix
     Xtrn = np.vstack(trn_images)
     Xtst = np.vstack(tst_images)
     
     # Read train solutions
-    Ytrn = np.loadtxt(open(f_in_sol, 'rb'), delimiter=',', skiprows=1, usecols=(range(1,39))
-
+    Ytrn = np.loadtxt(open(f_in_sol, 'rb'), delimiter=',', skiprows=1)
+    
     return (Xtrn, Ytrn, Xtst)
