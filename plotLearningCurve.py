@@ -40,7 +40,7 @@ def plotLearningCurve(Xtrn, Ytrn, model, neach = 2500):
         # Keep us informed on progress, print error
         if ((i-10) % 10000) == 0:
             print 'training example: %i' % i
-            print '\t train err: %f \t test err: %f' % (trn_err, tst_err)
+            print '\t train err: %f \t test err: %f' % (trn_i_err, tst_i_err)
     
     # Plot curve
     plt.plot(obs_range, trn_err)

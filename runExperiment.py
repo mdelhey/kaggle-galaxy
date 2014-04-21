@@ -2,17 +2,19 @@ f_in_trn = 'Data/images_train'
 f_in_tst = 'Data/images_test'
 f_in_sol = 'Data/train_solutions.csv'
 
-f_in_flat_trn = 'Data/train_24_aug.csv'
-f_in_flat_tst = 'Data/test_24_aug.csv'
+#f_in_flat_trn = 'Data/train_24_aug.csv'
+#f_in_flat_tst = 'Data/test_24_aug.csv'
+f_in_flat_trn = 'Data/train_24.csv'
+f_in_flat_tst = 'Data/test_24.csv'
 
-f_out_trn = 'Data/train_24_aug.csv'
-f_out_tst = 'Data/test_24_aug.csv'
-f_out_subm = 'Submissions/new_pp_ridge.csv'
+f_out_trn = 'Data/train_24.csv'
+f_out_tst = 'Data/test_24.csv'
+f_out_subm = 'Submissions/et_24.csv'
 
 # Process images
 '''
 from readData import readData
-(Xtrn, Ytrn, Xtst) = readData(f_in_trn, f_in_tst, f_in_sol)
+(Xtrn, Ytrn, Xtst) = readData(f_in_trn, f_in_tst, f_in_sol, augmenting=False)
 from saveData import saveData
 saveData((Xtrn, Xtst), (f_out_trn, f_out_tst), colfmt='%.18e')
 '''
@@ -33,10 +35,18 @@ Ytst = model.predict(Xtst)
 '''
 
 # Fit RF
+'''
 from sklearn.ensemble import RandomForestRegressor
-#from sklearn.ensemble import ExtraTreesRegressor
-#model = ExtraTreesRegressor(n_estimators=10, max_features=32, random_state=0)
 model = RandomForestRegressor()
+model.fit(Xtrn, Ytrn[::, 1:])
+Ytst = model.predict(Xtst)
+'''
+
+# Fit Extra Trees (More random)
+seed = 0
+from sklearn.ensemble import ExtraTreesRegressor
+model = ExtraTreesRegressor(n_estimators=50, max_features='sqrt', random_state=seed,
+                            oob_score=True, bootstrap=True)
 model.fit(Xtrn, Ytrn[::, 1:])
 Ytst = model.predict(Xtst)
 
