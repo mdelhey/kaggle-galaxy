@@ -48,6 +48,7 @@ from sklearn.ensemble import ExtraTreesRegressor
 # n_estimators=10 : 0.14191 [sqrt]
 # n_estimators=50 : 0.13590 [sqrt]
 # n_estimators=50 : 0.13081 [None]
+# n_estimators=500 : 0.12935 [None]
 model = ExtraTreesRegressor(n_estimators=500, max_features=None,
                             random_state=seed, verbose=True,
                             oob_score=True, bootstrap=True,
