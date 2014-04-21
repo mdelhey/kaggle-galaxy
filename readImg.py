@@ -1,4 +1,4 @@
-def readImg(imgf, dim=24, augment=True):
+def readImg(imgf, dim=32, augment=True):
     '''
     This function loads in an image and computes dim reduction.
     ---
@@ -13,7 +13,7 @@ def readImg(imgf, dim=24, augment=True):
     from scipy.cluster.vq import whiten, kmeans
 
     # Read data file (0 = greyscale, otherwise = rgb)
-    img = cv2.imread(imgf, 0)
+    img = cv2.imread(imgf)
     
     # Scale data by dividing by 255
     img = img / float(255)
@@ -31,7 +31,7 @@ def readImg(imgf, dim=24, augment=True):
     
     # Flatten data [each col represents the r/g/b color]
     #img = np.reshape(img, (dim*dim,3))
-    img = np.reshape(img, (dim*dim))
+    img = np.reshape( img, (dim*dim,img.shape[2]) )
         
     # Whiten data
     img = whiten(img)
