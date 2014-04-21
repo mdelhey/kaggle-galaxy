@@ -9,7 +9,7 @@ f_in_flat_tst = 'Data/test_24.csv'
 
 f_out_trn = 'Data/train_24.csv'
 f_out_tst = 'Data/test_24.csv'
-f_out_subm = 'Submissions/et_24.csv'
+f_out_subm = 'Submissions/et_24_500est_None.csv'
 
 # Process images
 '''
@@ -45,14 +45,21 @@ Ytst = model.predict(Xtst)
 # Fit Extra Trees (More random)
 seed = 0
 from sklearn.ensemble import ExtraTreesRegressor
-model = ExtraTreesRegressor(n_estimators=50, max_features='sqrt', random_state=seed,
-                            oob_score=True, bootstrap=True)
+# n_estimators=10 : 0.14191 [sqrt]
+# n_estimators=50 : 0.13590 [sqrt]
+# n_estimators=50 : 0.13081 [None]
+model = ExtraTreesRegressor(n_estimators=500, max_features=None,
+                            random_state=seed, verbose=True,
+                            oob_score=True, bootstrap=True,
+                            n_jobs=8)
 model.fit(Xtrn, Ytrn[::, 1:])
 Ytst = model.predict(Xtst)
 
 # Plot learning curve
+'''
 from plotLearningCurve import plotLearningCurve
 plotLearningCurve(Xtrn, Ytrn, model)
+'''
 
 # Fit Ridge
 '''
