@@ -1,8 +1,8 @@
-def deskewImg(img, SZ=20):
+def deskewImg(img, dim):
     '''
     Takes an image and properly aligns it.
     ---
-    I: Image matrix from cv2.
+    I: Image matrix from cv2; dim of image.
     O: Image matrix, deskewed. 
     '''
     import numpy as np
@@ -21,9 +21,9 @@ def deskewImg(img, SZ=20):
     skew = m['mu11'] / m['mu02']
 
     # Create affine transform from skew
-    M = np.float32([[1, skew, -0.5*SZ*skew], [0, 1, 0]])
+    M = np.float32([[1, skew, -0.5*dim*skew], [0, 1, 0]])
 
     # Appliy skew-transform to matrix
-    img = cv2.warpAffine(img,M,(SZ, SZ),flags=affine_flags)
+    img = cv2.warpAffine(img,M,(dim, dim),flags=affine_flags)
     
     return img

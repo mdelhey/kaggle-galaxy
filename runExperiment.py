@@ -7,32 +7,31 @@ f_in_sol = 'Data/train_solutions.csv'
 f_in_flat_trn = 'Data/train_24.csv'
 f_in_flat_tst = 'Data/test_24.csv'
 
-f_out_trn = 'Data/train_24.csv'
-f_out_tst = 'Data/test_24.csv'
-f_out_subm = 'Submissions/et_24_500est_None.csv'
+f_out_trn = 'Data/train_24_desk.csv'
+f_out_tst = 'Data/test_2_desk.csv'
+f_out_subm = 'Submissions/ls_24_deskew.csv'
 
 # Process images
-'''
 from readData import readData
 (Xtrn, Ytrn, Xtst) = readData(f_in_trn, f_in_tst, f_in_sol, augmenting=False)
 from saveData import saveData
 saveData((Xtrn, Xtst), (f_out_trn, f_out_tst), colfmt='%.18e')
-'''
 
 # Load processed images from flat file, on disk
+'''
 from loadData import loadData
 Xtrn = loadData(f_in_flat_trn, rowskip=0)
 Xtst = loadData(f_in_flat_tst, rowskip=0)
 tst = loadData(f_in_flat_tst, rowskip=0)
 Ytrn = loadData(f_in_sol, rowskip=1)
+'''
 
 # Fit OLS
-'''
+print 'fitting ols'
 from sklearn import linear_model
 model = linear_model.LinearRegression()
 model.fit(Xtrn, Ytrn[::, 1:])
 Ytst = model.predict(Xtst)
-'''
 
 # Fit RF
 '''
@@ -43,6 +42,7 @@ Ytst = model.predict(Xtst)
 '''
 
 # Fit Extra Trees (More random)
+'''
 seed = 0
 from sklearn.ensemble import ExtraTreesRegressor
 # n_estimators=10 : 0.14191 [sqrt]
@@ -55,6 +55,7 @@ model = ExtraTreesRegressor(n_estimators=500, max_features=None,
                             n_jobs=8)
 model.fit(Xtrn, Ytrn[::, 1:])
 Ytst = model.predict(Xtst)
+'''
 
 # Plot learning curve
 '''

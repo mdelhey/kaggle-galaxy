@@ -26,7 +26,7 @@ def readImg(imgf, dim=32, augment=True):
 
     # Deskew the images
     from deskewImg import deskewImg
-    img = deskewImg(img)
+    img = deskewImg(img, dim)
 
     # Data augmentation
     if augment:
@@ -34,7 +34,6 @@ def readImg(imgf, dim=32, augment=True):
         img = augmentImg(img, dim)
     
     # Flatten data [each col represents the r/g/b color]
-    #img = np.reshape(img, (dim*dim,3))
     try:
         img = np.reshape( img, (dim*dim, img.shape[2]) )
     except IndexError:
