@@ -13,7 +13,7 @@ def readImg(imgf, dim=32, augment=True):
     from scipy.cluster.vq import whiten, kmeans
 
     # Read data file (0 = greyscale, otherwise = rgb)
-    img = cv2.imread(imgf)
+    img = cv2.imread(imgf,0)
     
     # Scale data by dividing by 255
     img = img / float(255)
@@ -24,6 +24,10 @@ def readImg(imgf, dim=32, augment=True):
     # Downsample images to 64x64 (dim x dim)
     img = cv2.resize(img, (dim, dim), interpolation=cv2.INTER_CUBIC)
 
+    # Deskew the images
+    from deskewImg import deskewImg
+    img = deskewImg(img)
+
     # Data augmentation
     if augment:
         from augmentImg import augmentImg
@@ -31,8 +35,11 @@ def readImg(imgf, dim=32, augment=True):
     
     # Flatten data [each col represents the r/g/b color]
     #img = np.reshape(img, (dim*dim,3))
-    img = np.reshape( img, (dim*dim,img.shape[2]) )
-        
+    try:
+        img = np.reshape( img, (dim*dim, img.shape[2]) )
+    except IndexError:
+        img = np.reshape( img, (dim*dim) )
+    
     # Whiten data
     img = whiten(img)
 
