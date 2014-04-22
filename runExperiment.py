@@ -4,27 +4,27 @@ f_in_sol = 'Data/train_solutions.csv'
 
 #f_in_flat_trn = 'Data/train_24_aug.csv'
 #f_in_flat_tst = 'Data/test_24_aug.csv'
-f_in_flat_trn = 'Data/train_24.csv'
-f_in_flat_tst = 'Data/test_24.csv'
+f_in_flat_trn = 'Data/train_64c.csv'
+f_in_flat_tst = 'Data/test_64c.csv'
 
-f_out_trn = 'Data/train_24.csv'
-f_out_tst = 'Data/test_24.csv'
-f_out_subm = 'Submissions/et_24_500est_None.csv'
+f_out_trn = 'Data/train_64c.csv'
+f_out_tst = 'Data/test_64c.csv'
+f_out_subm = 'Submissions/et_64c_50est_None.csv'
 
 # Process images
-'''
 from readData import readData
 (Xtrn, Ytrn, Xtst) = readData(f_in_trn, f_in_tst, f_in_sol, augmenting=False)
 from saveData import saveData
 saveData((Xtrn, Xtst), (f_out_trn, f_out_tst), colfmt='%.18e')
-'''
 
 # Load processed images from flat file, on disk
+'''
 from loadData import loadData
 Xtrn = loadData(f_in_flat_trn, rowskip=0)
 Xtst = loadData(f_in_flat_tst, rowskip=0)
 tst = loadData(f_in_flat_tst, rowskip=0)
 Ytrn = loadData(f_in_sol, rowskip=1)
+'''
 
 # Fit OLS
 '''
@@ -45,13 +45,16 @@ Ytst = model.predict(Xtst)
 # Fit Extra Trees (More random)
 seed = 0
 from sklearn.ensemble import ExtraTreesRegressor
-# n_estimators=10 : 0.14191 [sqrt]
+# n_estimators=10 : 0.14191 [sqrt] [32]
+# n_estimators=10 : 0.14185 [sqrt] [32c]
+# n_estimators=10 : 0.13998 [sqrt] [64]
 # n_estimators=50 : 0.13590 [sqrt]
 # n_estimators=50 : 0.13081 [None]
-model = ExtraTreesRegressor(n_estimators=500, max_features=None,
+# n_estimators=500 : 0.12954 [None]
+model = ExtraTreesRegressor(n_estimators=50, max_features=None,
                             random_state=seed, verbose=True,
                             oob_score=True, bootstrap=True,
-                            n_jobs=8)
+                            n_jobs=1)
 model.fit(Xtrn, Ytrn[::, 1:])
 Ytst = model.predict(Xtst)
 
