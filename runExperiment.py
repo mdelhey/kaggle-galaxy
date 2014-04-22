@@ -7,8 +7,8 @@ f_in_sol = 'Data/train_solutions.csv'
 f_in_flat_trn = 'Data/train_24.csv'
 f_in_flat_tst = 'Data/test_24.csv'
 
-f_out_trn = 'Data/train_24_desk.csv'
-f_out_tst = 'Data/test_2_desk.csv'
+f_out_trn = 'Data/train_24_deskew.csv'
+f_out_tst = 'Data/test_2_deskew.csv'
 f_out_subm = 'Submissions/ls_24_deskew.csv'
 
 # Process images
