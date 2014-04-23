@@ -1,4 +1,4 @@
-def readImg(imgf, dim=32, augment=True):
+def readImg(imgf, dim=64, augment=True, deskew=False, hog=True):
     '''
     This function loads in an image and computes dim reduction.
     ---
@@ -25,13 +25,19 @@ def readImg(imgf, dim=32, augment=True):
     img = cv2.resize(img, (dim, dim), interpolation=cv2.INTER_CUBIC)
 
     # Deskew the images
-    from deskewImg import deskewImg
-    img = deskewImg(img, dim)
+    if deskew:
+        from deskewImg import deskewImg
+        img = deskewImg(img, dim)
 
     # Data augmentation
     if augment:
         from augmentImg import augmentImg
         img = augmentImg(img, dim)
+
+    # Histogram of Gradients
+    if hog:
+        img = histogramOfGradients(img)
+        return img
     
     # Flatten data [each col represents the r/g/b color]
     try:

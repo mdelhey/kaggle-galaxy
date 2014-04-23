@@ -1,6 +1,5 @@
-def histogramOfGradients(img):
+def histogramOfGradients(img, bin_n=16):
     '''
-        
     ---
     I:
     O:
@@ -9,8 +8,8 @@ def histogramOfGradients(img):
     import cv2
 
     # Calculate Sobel derivatives of each cell in x/y direction
-    gx = cv2.Sobel(img, cv2.CV_32F, 1, 0)
-    gy = cv2.Sobel(img, cv2.CV_32F, 0, 1)
+    gx = cv2.Sobel(img, cv2.CV_64F, 1, 0)
+    gy = cv2.Sobel(img, cv2.CV_64F, 0, 1)
 
     # Find magnitude/direction of gradient at each pixel
     mag, ang = cv2.cartToPolar(gx, gy)

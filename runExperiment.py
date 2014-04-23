@@ -2,16 +2,14 @@ f_in_trn = 'Data/images_train'
 f_in_tst = 'Data/images_test'
 f_in_sol = 'Data/train_solutions.csv'
 
-#f_in_flat_trn = 'Data/train_24_aug.csv'
-#f_in_flat_tst = 'Data/test_24_aug.csv'
-f_in_flat_trn = 'Data/train_24.csv'
-f_in_flat_tst = 'Data/test_24.csv'
+f_in_flat_trn = 'Data/train_64_hog.csv'
+f_in_flat_tst = 'Data/test_64_hog.csv'
 
-f_out_trn = 'Data/train_24_deskew.csv'
-f_out_tst = 'Data/test_2_deskew.csv'
-f_out_subm = 'Submissions/ls_24_deskew.csv'
+f_out_trn = 'Data/train_64_hog.csv'
+f_out_tst = 'Data/test_64_hog.csv'
+f_out_subm = 'Submissions/ls_64_hog.csv'
 
-# Process images
+# Process images (save to disk)
 from readData import readData
 (Xtrn, Ytrn, Xtst) = readData(f_in_trn, f_in_tst, f_in_sol, augmenting=False)
 from saveData import saveData
@@ -28,6 +26,9 @@ Ytrn = loadData(f_in_sol, rowskip=1)
 
 # Fit OLS
 print 'fitting ols'
+from scipy.cluster.vq import whiten
+Xtrn = whiten(Xtrn)
+Xtst = whiten(Xtst)
 from sklearn import linear_model
 model = linear_model.LinearRegression()
 model.fit(Xtrn, Ytrn[::, 1:])
@@ -50,12 +51,12 @@ from sklearn.ensemble import ExtraTreesRegressor
 # n_estimators=50 : 0.13590 [sqrt]
 # n_estimators=50 : 0.13081 [None]
 # n_estimators=500 : 0.12935 [None]
-# n_estimators=10 : 0.14191 [sqrt] [32]                               |       
-# n_estimators=10 : 0.14185 [sqrt] [32c]                              |
-# n_estimators=10 : 0.13998 [sqrt] [64]                               |       
-# n_estimators=50 : 0.13590 [sqrt]                                    |       
-# n_estimators=50 : 0.13081 [None]                                    |       
-# n_estimators=500 : 0.12954 [None]                                   |       
+# n_estimators=10 : 0.14191 [sqrt] [32]         
+# n_estimators=10 : 0.14185 [sqrt] [32c]        
+# n_estimators=10 : 0.13998 [sqrt] [64]         
+# n_estimators=50 : 0.13590 [sqrt]              
+# n_estimators=50 : 0.13081 [None]              
+# n_estimators=500 : 0.12954 [None]             
 # n_estimators=500 : 0.12935 [None]
 '''
 model = ExtraTreesRegressor(n_estimators=500, max_features=None,
