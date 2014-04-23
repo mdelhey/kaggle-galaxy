@@ -92,6 +92,14 @@ class LogisticRegression(object):
         # parameters of the model
         self.params = [self.W, self.b]
 
+
+    def mean_square_error(self, y):
+        '''
+        Return mean squared error:
+            loss = ||Y - XB||^2
+        '''
+        return 0
+        
     def negative_log_likelihood(self, y):
         """Return the mean of the negative log-likelihood of the prediction
         of this model under a given target distribution.
