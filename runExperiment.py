@@ -25,10 +25,12 @@ Ytrn = loadData(f_in_sol, rowskip=1)
 '''
 
 # Fit OLS
+'''
 from sklearn import linear_model
 model = linear_model.LinearRegression()
 model.fit(Xtrn, Ytrn[::, 1:])
 Ytst = model.predict(Xtst)
+'''
 
 # Fit RF
 '''
@@ -57,6 +59,12 @@ model = ExtraTreesRegressor(n_estimators=500, max_features=None,
 model.fit(Xtrn, Ytrn[::, 1:])
 Ytst = model.predict(Xtst)
 '''
+
+# Fit gradient boosting
+from sklearn.ensemble import GradientBoostingRegressor
+model = GradientBoostingRegressor()
+model.fit(Xtrn, Ytrn[::, 1:])
+Ytst = model.predict(Xtst)
 
 # Plot learning curve
 '''
